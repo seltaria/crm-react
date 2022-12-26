@@ -31,7 +31,7 @@ export function Modal(props) {
     setFormData(prevFormData => {
       return {
         ...prevFormData,
-        [name]: value
+        [name]: value.trim()
       }
     })
   }
