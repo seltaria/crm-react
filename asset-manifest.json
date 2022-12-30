@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/crm-react/static/css/main.582ed2a1.css",
+    "main.js": "/crm-react/static/js/main.f72b7472.js",
+    "index.html": "/crm-react/index.html",
+    "static/media/edit.svg": "/crm-react/static/media/edit.1553cc1b9ee8219266f9.svg",
+    "main.582ed2a1.css.map": "/crm-react/static/css/main.582ed2a1.css.map",
+    "main.f72b7472.js.map": "/crm-react/static/js/main.f72b7472.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.582ed2a1.css",
+    "static/js/main.f72b7472.js"
+  ]
+}
