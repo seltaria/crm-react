@@ -18,7 +18,7 @@ export function TableButtons(props) {
         Изменить
       </button>
       <button className="table__delete" onClick={onDeleteClick}>
-        <img src="/img/delete.svg" alt="del"></img>
+        <img src="crm-react/img/delete.svg" alt="del"></img>
         Удалить
       </button>
     </div>

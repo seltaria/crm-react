@@ -251,12 +251,6 @@ thead th {
   color: rgba(152, 115, 255, 1);
 }
 
-.table__delete {
-  /* display: flex; */
-  /* align-items: center; */
-  /* background-image: url(/public/img/delete-contact.svg); */
-}
-
 .table__delete:hover,
 .table__delete:focus-visible,
 .table__delete:active {
@@ -284,7 +278,6 @@ thead th {
   height: 44px;
   color: var(--color-firm);
   border: 1px solid var(--color-firm);
-  /* background: 20px / 22px no-repeat url(img/add_client.svg); */
   transition-property: color, border-color;
   transition-duration: .2s;
   transition-timing-function: ease-in-out;
@@ -292,9 +285,6 @@ thead th {
 
 .clients__button-add:hover,
 .clients__button-add:focus-visible {
-  /* color: rgb(195, 162, 226); */
-  /* border-color: rgba(155, 81, 224, 1); */
-  /* border: 1px dashed var(--color-firm); */
   outline: 1px dotted var(--color-firm);
   outline-offset: -4px;
 }
@@ -420,7 +410,6 @@ label {
 .add__add-section {
   display: flex;
   flex-direction: column-reverse;
-  /* padding-top: 25px; */
   background-color: rgba(200, 197, 209, 0.3);
   margin-bottom: 25px;
 }
@@ -496,7 +485,6 @@ select {
   outline: none;
   border: none;
   border-right: 1px solid var(--color-grey_border);
-  /* background-image: url(img/arrow.svg); */
   background-position: 93%;
   background-repeat: no-repeat;
   appearance: none;

@@ -5,7 +5,7 @@ export function Header(props) {
     <header className="header">
       <div className="header__container">
         <a className="header__logo" href="#">
-          <img src="/img/logo.png" alt=""></img>
+          <img src="crm-react/img/icon-origami.png" alt=""></img>
         </a>
         <input
           className="header__search"

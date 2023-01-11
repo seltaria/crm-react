@@ -55,17 +55,32 @@ export function Modal(props) {
   /* Функция добавления нового клиента по данным инпутов: */
   async function addClient() {
     if (formData.name && formData.surname) {
-      const a = await fetch('http://localhost:3000/api/clients', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      if (!props.isLocal) {
+        const a = await fetch('http://localhost:3000/api/clients', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name.charAt(0).toUpperCase() + formData.name.slice(1),
+            surname: formData.surname.charAt(0).toUpperCase() + formData.surname.slice(1),
+            lastName: formData.middlename.charAt(0).toUpperCase() + formData.middlename.slice(1),
+          })
+        })
+        const data = await a.json()
+        props.setClients(prevState => [...prevState, data])
+      } else {
+        /* Если сервер недоступен, сохраняем данные в локальное хранилище: */
+        const prevStorage = JSON.parse(localStorage.getItem('crm-clients')) || [];
+        let arr = [...prevStorage, {
+          id: Date.now().toString(),
           name: formData.name.charAt(0).toUpperCase() + formData.name.slice(1),
           surname: formData.surname.charAt(0).toUpperCase() + formData.surname.slice(1),
           lastName: formData.middlename.charAt(0).toUpperCase() + formData.middlename.slice(1),
-        })
-      })
-      const data = await a.json()
-      props.setClients(prevState => [...prevState, data])
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }];
+        localStorage.setItem('crm-clients', JSON.stringify(arr));
+        props.setClients(arr);
+      }
 
       setError(false);
       closeModal();
@@ -77,17 +92,31 @@ export function Modal(props) {
   /* Функция изменения данных клиента на сервере: */
   async function editClient() {
     if (formData.name && formData.surname) {
-      const a = await fetch(`http://localhost:3000/api/clients/${props.clientId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
+      if (!props.isLocal) {
+        const a = await fetch(`http://localhost:3000/api/clients/${props.clientId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            name: formData.name.charAt(0).toUpperCase() + formData.name.slice(1),
+            surname: formData.surname.charAt(0).toUpperCase() + formData.surname.slice(1),
+            lastName: formData.middlename.charAt(0).toUpperCase() + formData.middlename.slice(1),
+          })
+        })
+        const data = await a.json();
+        /* Применение изменений в таблице после редактирования клиента: */
+        props.setClients(props.clients.map(client => client.id === props.clientId ? data : client))
+      } else {
+        const prevLocal = JSON.parse(localStorage.getItem('crm-clients'));
+        const updatedClient = {
           name: formData.name.charAt(0).toUpperCase() + formData.name.slice(1),
           surname: formData.surname.charAt(0).toUpperCase() + formData.surname.slice(1),
           lastName: formData.middlename.charAt(0).toUpperCase() + formData.middlename.slice(1),
-        })
-      })
-      const data = await a.json();
-      /* Применение изменений в таблице после редактирования клиента: */
-      props.setClients(props.clients.map(client => client.id === props.clientId ? data : client))
+          updatedAt: new Date().toISOString(),
+        };
+        const newLocal = prevLocal.map(client => client.id === props.clientId ? { ...updatedClient, id: client.id, createdAt: client.createdAt } : client);
+        localStorage.setItem('crm-clients', JSON.stringify(newLocal));
+        /* Применение изменений в таблице после редактирования клиента: */
+        props.setClients(newLocal);
+      }
 
       setError(false);
       closeModal();
@@ -113,7 +142,7 @@ export function Modal(props) {
             </h2>
             {props.modalKey === "edit" && <div className="edit__id">ID: {props.clientId}</div>}
             <button className="add__close" onClick={props.toggleModal}>
-              <img src="/img/close-modal.svg" alt="close" />
+              <img src="crm-react/img/close-modal.svg" alt="close" />
             </button>
           </div>
           <form className="add__form">

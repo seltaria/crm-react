@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DeleteModal } from "./DeleteModal";
+import { Loading } from "./Loading";
 import { Modal } from "./Modal";
 import { Table } from "./Table";
 
@@ -18,12 +19,33 @@ export function Main(props) {
   /* Список клиентов: */
   const [clients, setClients] = React.useState([])
 
+  /* Использование локального хранилища: */
+  const [isLocal, setIsLocal] = React.useState(false);
+
+  /* Отображение загрузки: */
+  const [loading, setLoading] = React.useState(false);
+
   /* Получение данных с сервера: */
   useEffect(() => {
-    fetch('http://localhost:3000/api/clients')
-      .then(res => res.json())
-      .then(data => setClients(data))
-    console.log('Данные получены')
+    async function fetchData() {
+      try {
+        /* Отобразить загрузку: */
+        setLoading(true);
+        /* Пробуем считать данные с сервера: */
+        await fetch('http://localhost:3000/api/clients')
+          .then(res => res.json())
+          .then(data => setClients(data))
+      } catch (err) {
+        console.log('Сервер недоступен, работа с данными будет осуществляться через локальное хранилище')
+        /* Если сервер недоступен, данные берутся из локального хранилища: */
+        setIsLocal(true);
+        localStorage.getItem('crm-clients') ? setClients(JSON.parse(localStorage.getItem('crm-clients'))) : localStorage.setItem('crm-clients', JSON.stringify([]));
+      } finally {
+        /* Убрать загрузку: */
+        setLoading(false);
+      }
+    }
+    fetchData();
   }, [])
 
   /* Переключение состояния модального окна: */
@@ -47,18 +69,19 @@ export function Main(props) {
       <h2 className="clients__title">
         Клиенты
       </h2>
-      <Table
+      {loading && <Loading />}
+      {!loading && <Table
         clients={clients}
         toggleModal={toggleModal}
         toggleDeleteModal={toggleDeleteModal}
         getId={client}
         inputData={props.inputData}
         setInputData={props.setInputData}
-      />
-      <button className="clients__button-add" onClick={() => toggleModal('add')}>
-        <img src="/img/add_client.svg" alt="" />
+      />}
+      {!loading && <button className="clients__button-add" onClick={() => toggleModal('add')}>
+        <img src="crm-react/img/add_client.svg" alt="" />
         Добавить клиента
-      </button>
+      </button>}
       <Modal
         clients={clients}
         isOpen={isModalOpen}
@@ -67,12 +90,14 @@ export function Main(props) {
         modalKey={modalKey}
         clientId={clientId}
         setClients={setClients}
+        isLocal={isLocal}
       />
       <DeleteModal
         isOpen={isDeleteModalOpen}
         toggleDeleteModal={toggleDeleteModal}
         clientId={clientId}
         setClients={setClients}
+        isLocal={isLocal}
       />
     </main>
   )

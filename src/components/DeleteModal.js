@@ -9,12 +9,21 @@ export function DeleteModal(props) {
 
   /* Удаление клиента с сервера */
   async function deleteClient() {
-    await fetch(`http://localhost:3000/api/clients/${props.clientId}`, {
-      method: 'DELETE'
-    })
-    fetch('http://localhost:3000/api/clients')
-      .then(res => res.json())
-      .then(data => props.setClients(data))
+    if (!props.isLocal) {
+      await fetch(`http://localhost:3000/api/clients/${props.clientId}`, {
+        method: 'DELETE'
+      })
+      fetch('http://localhost:3000/api/clients')
+        .then(res => res.json())
+        .then(data => props.setClients(data))
+    } else {
+      /* Если сервер недоступен, удаление из локального хранилища: */
+      const prevLocal = JSON.parse(localStorage.getItem('crm-clients'));
+      const newLocal = prevLocal.filter(client => client.id !== props.clientId);
+      props.setClients(newLocal);
+      localStorage.setItem('crm-clients', JSON.stringify(newLocal));
+    }
+
     props.toggleDeleteModal();
   }
 
